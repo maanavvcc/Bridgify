@@ -17,9 +17,11 @@ app.get('/connections', (req, res) => {
   res.json(connections);
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'mobile', 'mobile.html'));
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../', 'WebApp', 'src'));
+// });
+
+app.use('/', express.static(path.join(__dirname, '../', 'WebApp', 'src')))
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
