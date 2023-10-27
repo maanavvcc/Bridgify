@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Interface</title>
+</head>
+<body>
+  <h1>Mobile Interface</h1>
+  <div>
+    <label for="connection-key">Enter connection key:</label>
+    <input type="text" id="connection-key" maxlength="6">
+    <button onclick="connect()">Connect</button>
+    <p id="status"></p>
+  </div>
+
+  <div id="connected-container" style="display: none;">
+    <button onclick="buttonPressed()">Press Me!</button>
+    <button onclick="buttonPressed('ctrl-c')">CTRL + C</button>
+<button onclick="buttonPressed('ctrl-v')">CTRL + V</button>
+<button onclick="buttonPressed('windows')">Windows Key</button>
+  </div>
+  
+
+  <script src="https://cdn.socket.io/4.4.1/socket.io.js"></script>
+  <script>
+    const socket = io.connect('http://136.57.134.145:80');
+    const connectionKeyInput = document.getElementById('connection-key');
+    const statusElement = document.getElementById('status');
+
+    function connect() {
+      const key = connectionKeyInput.value;
+      if (key.length === 6) {
+        socket.emit('mobile-connect', key);
+      } else {
+        statusElement.textContent = 'Please enter a 6-digit key.';
+      }
+    }
+
+    socket.on('connection-error', (message) => {
+        statusElement.textContent = message;
+    });
+
+
+    function buttonPressed() {
+        const key = connectionKeyInput.value;
+        socket.emit('button-pressed', key);
+    }
+
+    function buttonPressed(shortcut) {
+  const key = connectionKeyInput.value;
+  socket.emit('button-pressed', { key, shortcut });
+}
+
+
+
+    socket.on('mobile-connected', () => {
+        statusElement.textContent = 'Connected to desktop!';
+        console.log("HI");
+        document.getElementById('connected-container').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

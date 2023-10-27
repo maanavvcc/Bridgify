@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Active Connections</title>
+</head>
+<body>
+  <h1>Active Connections</h1>
+  <ul id="connections"></ul>
+
+  <script src="https://cdn.socket.io/4.4.1/socket.io.js"></script>
+  <script>
+    const socket = io.connect('http://localhost:3000');
+    const connectionsList = document.getElementById('connections');
+
+    async function fetchConnections() {
+      const response = await fetch('http://localhost:3000/connections');
+      const connections = await response.json();
+      connectionsList.innerHTML = '';
+      for (const key in connections) {
+        const li = document.createElement('li');
+        li.textContent = `Key: ${key}, Desktop: ${connections[key].desktop}, Mobile: ${connections[key].mobile || 'Not connected'}`;
+        connectionsList.appendChild(li);
+      }
+    }
+
+    fetchConnections();
+    setInterval(fetchConnections, 5000); // Fetch connections every 5 seconds
+  </script>
+</body>
+</html>

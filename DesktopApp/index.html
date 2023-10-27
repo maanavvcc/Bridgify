@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electron App</title>
+</head>
+<body>
+  <h1>Desktop Interface</h1>
+  <div id="key-container">
+    <p>Your connection key:</p>
+    <h2 id="connection-key">Generating...</h2>
+  </div>
+
+  <script src="https://cdn.socket.io/4.4.1/socket.io.js"></script>
+  <script>
+    const socket = io.connect('http://localhost:80');
+    const keyContainer = document.getElementById('key-container');
+    const connectionKeyElement = document.getElementById('connection-key');
+
+    socket.on('connect', () => {
+      socket.emit('desktop-connect');
+    });
+
+    socket.on('key', (key) => {
+      connectionKeyElement.textContent = key;
+    });
+
+    socket.on('mobile-connected', () => {
+      keyContainer.innerHTML = '<p>Mobile device connected!</p>';
+    });
+
+    socket.on('button-pressed', (shortcut) => {
+      keyContainer.innerHTML = '<p>BUTTON PRESSED: ' + shortcut + '</p>';
+      window.electron.sendShortcut(shortcut);
+    });
+  </script>
+</body>
+</html>
