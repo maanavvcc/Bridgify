@@ -12,6 +12,7 @@
     <p>Your connection key:</p>
     <h2 id="connection-key">Generating...</h2>
   </div>
+  <button id="reset-button" onclick="resetConnection()">Disconnect</button>
 
   <script src="https://cdn.socket.io/4.4.1/socket.io.js"></script>
   <script>
@@ -25,6 +26,7 @@
 
     socket.on('key', (key) => {
       connectionKeyElement.textContent = key;
+      keyContainer.innerHTML = `<p>Your connection key:</p><h2 id="connection-key">${key}</h2>`;
     });
 
     socket.on('mobile-connected', () => {
@@ -35,6 +37,19 @@
       keyContainer.innerHTML = '<p>BUTTON PRESSED: ' + shortcut + '</p>';
       window.electron.sendShortcut(shortcut);
     });
+
+    socket.on('mobile-disconnected', () => {
+  keyContainer.innerHTML = '<p>Mobile device disconnected!</p>';
+  // Reconnect or generate a new key if necessary
+  socket.emit('desktop-connect');
+});
+
+
+    function resetConnection() {
+      socket.emit('reset-connection');
+      // Update UI
+      keyContainer.innerHTML = '<p>Connection reset. Generating new key...</p>';
+    }
   </script>
 </body>
 </html>

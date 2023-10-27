@@ -1,0 +1,12 @@
+* {
+    touch-action: manipulation;
+}
+
+body.connected #status {
+    color: #60E693;
+  }
+  
+body.connected button {
+    background-color: #60E693;
+    /* Add other styles as needed */
+  }
