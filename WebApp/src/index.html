@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-900 text-white">
+<html lang="en" class="h-full background-full text-white">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,17 +9,22 @@
   <link href="styles.css" rel="stylesheet">
 </head>
 <body class="h-full flex flex-col">
+  <div id="main-content" class="h-full flex flex-col">
   <div class="p-4 text-center">
     <h1 class="text-2xl font-bold">CONNECTION</h1>
-    <h4 class="text-4l"><span class="text-orange-500">Connect</span> your computer</h4>
+    <h4 class="text-4l" id="connection-status">
+      <span id="connect-text" class="text-orange-500">Connect</span> your computer
+    </h4>
   </div>
 
   <div class="flex-1 flex flex-col items-center justify-center">
+    <img id="status-image" src="assets/disconnected.png" alt="Connection Status" class="w-32 h-32 mb-4">
     <div id="connection-container" class="text-center">
       <div class="mb-4">
         <label for="connection-key" class="block text-sm font-medium text-white">Enter connection key:</label>
         <input type="text" id="connection-key" maxlength="6" class="mt-1 p-2 text-black w-32">
       </div>
+      
       <button onclick="connect()" class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Connect</button>
       
 
@@ -34,6 +39,24 @@
       <button onclick="buttonPressed('closedbracket')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded m-2">]</button>
     </div>
     <button id="disconnect-button" onclick="disconnect()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2 hidden">Disconnect</button>
+
+    <div id="cards-container" class="p-4">
+      <div class="card">
+        <h3 class="card-title" onclick="toggleCard('photoshop')">Photoshop</h3>
+        <div class="card-buttons hidden" id="photoshop-buttons">
+          <button onclick="buttonPressed('ctrl-c')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded m-2">CTRL + C</button>
+          <button onclick="buttonPressed('ctrl-v')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded m-2">CTRL + V</button>
+          <!-- ... [add other buttons as needed] ... -->
+        </div>
+      </div>
+      <!-- ... [other cards] ... -->
+    </div>
+  </div>
+    <div id="card-details-container" class="hidden fixed inset-0 bg-gray-900 p-4 flex flex-col items-center justify-center z-10">
+      <button onclick="hideCardDetails()" class="mb-4 bg-gray-800 text-white py-2 px-4 rounded">Back</button>
+      <div id="card-details" class="text-center"></div>
+    </div>
+  </div>
   </div>
   <script src="https://cdn.socket.io/4.4.1/socket.io.js"></script>
   <script src = "app.js"></script>

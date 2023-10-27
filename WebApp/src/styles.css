@@ -4,9 +4,86 @@
 
 body.connected #status {
     color: #60E693;
-  }
-  
+}
+
 body.connected button {
     background-color: #60E693;
     /* Add other styles as needed */
+}
+
+#status-image {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.card {
+    background-color: #333;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    cursor: pointer;
   }
+  
+  .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .card-buttons {
+    display: none;
+  }
+  
+  .card-buttons button {
+    margin-right: 10px;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .show {
+    display: block;
+  }
+
+  .background-full {
+    background-color: #161616;
+  }
+
+  .text-orange-500 {
+    color: #DA9327;
+  }
+
+  #card-details-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  
+  #card-details-container button {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+  
+  #card-details {
+    text-align: center;
+  }
+
+  #main-content {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  #card-details-container {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .hidden {
+    transform: translateX(100%);
+  }
+  
