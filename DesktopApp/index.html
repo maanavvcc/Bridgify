@@ -1,3 +1,5 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,16 +41,18 @@
     });
 
     socket.on('mobile-disconnected', () => {
-  keyContainer.innerHTML = '<p>Mobile device disconnected!</p>';
-  // Reconnect or generate a new key if necessary
-  socket.emit('desktop-connect');
-});
-
+      keyContainer.innerHTML = '<p>Mobile device disconnected!</p>';
+      // Reconnect or generate a new key if necessary
+      socket.emit('desktop-connect');
+    });
 
     function resetConnection() {
-      socket.emit('reset-connection');
+      // Disconnect the socket on button press
+      socket.disconnect();
       // Update UI
       keyContainer.innerHTML = '<p>Connection reset. Generating new key...</p>';
+      // Reconnect or generate a new key if necessary
+      socket.connect();
     }
   </script>
 </body>
