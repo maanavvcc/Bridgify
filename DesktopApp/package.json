@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "echo hi && electron main.js",
     "postinstall": "electron-rebuild -f -w robotjs"
   },
@@ -16,6 +15,7 @@
     "robotjs": "^0.6.0"
   },
   "devDependencies": {
+    "@electron/rebuild": "^3.3.0",
     "electron-rebuild": "^3.2.9"
   }
 }
