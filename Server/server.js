@@ -5,6 +5,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const path = require('path');
+const si = require('systeminformation');
+let mobileConnected = 0; // Initialize mobileConnected as a variable
 
 const connections = {};
 const cors = require('cors');
@@ -19,26 +21,19 @@ app.get('/connections', (req, res) => {
 
 app.use('/', express.static(path.join(__dirname, '../', 'WebApp', 'src')));
 
-let serverKey;
+let serverKey = generateKey();
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  // Ensure that the current socket doesn't have an existing connection
-  if (!connections[socket.id]) {
-    connections[socket.id] = { desktop: null, mobile: null };
-  }
+  // Initialize connections[socket.id] as an object
+  connections[socket.id] = {};
 
   socket.on('desktop-connect', () => {
-    // Disconnect existing desktop connection if present
-    if (connections[socket.id].desktop) {
-      io.to(connections[socket.id].desktop).emit('mobile-disconnected');
-    }
-
     // Generate a new key for the desktop connection
     serverKey = generateKey();
     connections[socket.id].desktop = socket.id;
-    
+
     // Inform the desktop client about the new key
     io.to(socket.id).emit('key', serverKey);
   });
@@ -49,12 +44,9 @@ io.on('connection', (socket) => {
     console.log('Server Key:', serverKey);
 
     // Mobile device trying to connect
-    if (submittedKey === serverKey) {
-      // Disconnect existing mobile connection if present
-      if (connections[socket.id].mobile) {
-        io.to(connections[socket.id].mobile).emit('desktop-disconnected');
-      }
-
+    if (mobileConnected === 0 && submittedKey === serverKey) {
+      mobileConnected += 1;
+      console.log(mobileConnected)
       connections[socket.id].mobile = socket.id;
       io.to(socket.id).emit('mobile-connected');
       console.log('Mobile connected successfully');
@@ -67,53 +59,53 @@ io.on('connection', (socket) => {
 
   // Handle disconnection
   socket.on('disconnect', () => {
+    if (connections[socket.id] && connections[socket.id].mobile === socket.id) {
+      mobileConnected -= 1;
+      console.log(mobileConnected)
+    }
     console.log('User disconnected:', socket.id);
-
-    if (connections[socket.id]) {
-      const desktopSocketId = connections[socket.id].desktop;
-      const mobileSocketId = connections[socket.id].mobile;
-
-      if (desktopSocketId) {
-        io.to(desktopSocketId).emit('mobile-disconnected');
-      }
-
-      if (mobileSocketId) {
-        io.to(mobileSocketId).emit('desktop-disconnected');
-      }
-
-      // Clean up the connections object
-      delete connections[socket.id];
-    }
-  });
-  
-  socket.on('reset-connection', () => {
-    for (const key in connections) {
-      if (connections[key].desktop === socket.id) {
-        if (connections[key].mobile) {
-          io.to(connections[key].mobile).emit('desktop-disconnected');
-          delete connections[key].mobile;
-        }
-        const newKey = generateKey();
-        connections[socket.id].desktop = null; // Update the desktop socket association
-        connections[newKey] = { desktop: socket.id, mobile: null };
-        socket.emit('key', newKey);
-      }
-    }
-  });
-
-  socket.on('mobile-disconnect', () => {
-    console.log('Mobile disconnected:', socket.id);
-    for (const key in connections) {
-      if (connections[key].mobile === socket.id) {
-        if (connections[key].desktop) {
-          io.to(connections[key].desktop).emit('mobile-disconnected');
-        }
-        delete connections[key].mobile;
-        break;
-      }
-    }
+    // Optionally, you can remove the connection object when a socket disconnects
+    delete connections[socket.id];
   });
 });
+
+//function closeAllSockets() {
+  // Iterate over all connected sockets
+  //Object.values(io.sockets.connected).forEach((socket) => {
+    // Disconnect each socket
+    //socket.disconnect(true);
+  //});
+//}
+
+setInterval(async () => {
+  try {
+    // Fetch CPU information
+    const cpuInfo = await si.cpu();
+    // Fetch memory information
+    const memInfo = await si.mem();
+    // Fetch GPU information
+    const gpuInfo = await si.graphics();
+    // Fetch CPU temperature information
+    const cpuTemperature = await si.cpuTemperature();
+    // Fetch CPU utilization information
+    const cpuLoad = await si.currentLoad();
+
+    // Combine all information into one object
+    const systemInfo = {
+      cpu: cpuInfo,
+      memory: memInfo,
+      gpu: gpuInfo,
+      temperatures: { cpu: cpuTemperature },
+      utilization: { cpu: cpuLoad },
+    };
+
+    // Send system information to all connected sockets
+    io.emit('system-info', systemInfo);
+    console.log('System information sent to all connected sockets:');
+  } catch (error) {
+    console.error('Error fetching system information:', error.message);
+  }
+}, 10000); // Fetch every 10 seconds
 
 function generateKey() {
   let key = '';
