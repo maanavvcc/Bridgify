@@ -1,7 +1,12 @@
-// reducer.js
 const initialState = {
   socket: null,
-  // other state properties...
+  systemInfo: {
+    cpu: null,
+    memory: null,
+    gpu: null,
+    temperatures: { cpu: null },
+    utilization: { cpu: null },
+  },
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -11,10 +16,15 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         socket: action.payload,
       };
-    // other cases...
+    case 'UPDATE_SYSTEM_INFO':
+      return {
+        ...state,
+        systemInfo: {
+          ...state.systemInfo,
+          ...action.payload,
+        },
+      };
     default:
       return state;
   }
 };
-
-export default rootReducer;
