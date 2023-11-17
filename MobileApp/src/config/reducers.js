@@ -1,12 +1,6 @@
 const initialState = {
   socket: null,
-  systemInfo: {
-    cpu: null,
-    memory: null,
-    gpu: null,
-    temperatures: { cpu: null },
-    utilization: { cpu: null },
-  },
+  systemInfo: null
 };
 
 const rootReducer = (state = initialState, action) => {
