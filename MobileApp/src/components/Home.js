@@ -1,40 +1,68 @@
 import React, { useState, useEffect } from 'react';
 import { View, Button, Image, TouchableOpacity, Text } from 'react-native';
 import Collapsible from 'react-native-collapsible';
-import io from 'socket.io-client';
-import { setSocket, updateSystemInfo } from '../config/actions.js'; // Assuming you have an action to update system info
+import Modal from 'react-native-modal';
+import 'react-native-gesture-handler';
+import { setSocket } from '../config/actions.js';
 import { useSelector, useDispatch } from 'react-redux';
+import { styles } from '../config/styles.js';
+import * as SysInfo from '../config/sysinfo.js'
 
 const HomeScreen = ({ route, navigation }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
+  const systemInfo = useSelector((state) => state.systemInfo);
   const socket = useSelector((state) => state.socket);
-  const systemInfo = useSelector((state) => state.systemInfo); // Assuming you store system info in the Redux store
   const dispatch = useDispatch();
+  const gpuInfo = SysInfo.getGPUInfo(systemInfo);
+  const cpuInfo = SysInfo.getCPUInfo(systemInfo);
+  const memInfo = SysInfo.getMemInfo(systemInfo);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible2, setIsVisible2] = useState(false);
+  const [isVisible3, setIsVisible3] = useState(false);
 
-  useEffect(() => {
-    if (socket) {
-      // Listen for 'system-info' events from the server
-      socket.on('system-info', (data) => {
-        console.log('Received system-info:', data);
-        // Dispatch an action to update the Redux store with the received system information
-        dispatch(updateSystemInfo(data));
-      });
-    }
-
-    // Clean up the socket event listener when the component unmounts
-    return () => {
-      if (socket) {
-        socket.off('system-info');
-      }
-    };
-  }, [socket, dispatch]);
 
   const handleDisconnect = () => {
     if (socket) {
       socket.disconnect();
-      dispatch(setSocket(null)); // Clear the socket in the Redux store
+      dispatch(setSocket(null));
       navigation.navigate('Connect');
     }
+  };
+
+  const handleMainContentLongPress = () => {
+    setIsContextMenuVisible(true);
+  };
+
+  const handleContextMenuClose = () => {
+    setIsContextMenuVisible(false);
+  };
+
+  const handleContextMenuPress = (option) => {
+    switch (option) {
+      case 'Add CPU':
+        setIsVisible(true);
+        break;
+      case 'Add GPU':
+        setIsVisible2(true);
+        break;
+      case 'Add MEM':
+        setIsVisible3(true);
+        break;
+      case 'Remove CPU':
+        setIsVisible(false);
+        break;
+      case 'Remove GPU':
+        setIsVisible2(false);
+        break;
+      case 'Remove MEM':
+        setIsVisible3(false);
+        break;
+      default:
+
+    }
+
+    console.log(`Selected option: ${option}`);
   };
 
   React.useLayoutEffect(() => {
@@ -44,24 +72,47 @@ const HomeScreen = ({ route, navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end', margin: 10 }}>
-      <TouchableOpacity onPress={() => setIsCollapsed(!isCollapsed)}>
-        <Image source={require('../assets/adaptive-icon.png')} style={{ width: 40, height: 40 }} />
-      </TouchableOpacity>
-      <Collapsible collapsed={isCollapsed}>
-        <View>
-          <Button title="Disconnect" onPress={handleDisconnect} />
-          {/* Display system information */}
-          {systemInfo && (
-            <View>
-              <Text>CPU: {systemInfo.cpu.manufacturer} {systemInfo.cpu.brand}</Text>
-              <Text>GPU: {systemInfo.gpu.controllers[0].vendor} {systemInfo.gpu.controllers[0].model}</Text>
-              <Text>Memory Usage: {Math.round((1 - systemInfo.memory.free / systemInfo.memory.total) * 100)}%</Text>
-              {/* Add more information as needed */}
+    <View style={{ flex: 1, padding: 20, flexDirection: 'column' }}>
+      <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => setIsCollapsed(!isCollapsed)}>
+          <Image source={require('../assets/adaptive-icon.png')} style={{ width: 40, height: 40 }} />
+        </TouchableOpacity>
+        {!isCollapsed && (
+          <Collapsible style={styles.menu} collapsed={isCollapsed}>
+            <Button style={styles.buttonText} title="Disconnect" onPress={handleDisconnect} />
+          </Collapsible>
+        )}
+      </View>
+
+      <TouchableOpacity style={styles.mainContent} onLongPress={handleMainContentLongPress}>
+          {isVisible && (
+            <View style={styles.widget1}>
+              <Text style={styles.widgetText}>{`${cpuInfo.brand}\n\nCores: ${cpuInfo.cores}  |  Threads: ${cpuInfo.threads}  |  Speed: ${cpuInfo.speed}\n\nCurrent CPU Load: ${cpuInfo.load}`}</Text>
             </View>
           )}
+          {isVisible2 && (
+          <View style={styles.widget2}>
+            <Text style={styles.widgetText}>{`${gpuInfo.model}\n\nFan Speed: ${gpuInfo.fanSpeed}  |  GPU Temp: ${gpuInfo.temperature}  |  GPU Load: ${gpuInfo.utilizationGpu}\n\nGPU VRAM: ${gpuInfo.vram}  |  GPU Mem Load: ${gpuInfo.utilizationMemory}`}</Text>
+          </View>
+          )}
+          {isVisible3 && (
+          <View style={styles.widget3}>
+            <Text style={styles.widgetText}>{`Total Memory:${memInfo.total}\n\nFree: ${memInfo.free}  |  Used: ${memInfo.used}\n\nMemory Load: ${memInfo.load}`}</Text>
+          </View>
+          )}
+      </TouchableOpacity>
+
+      <Modal isVisible={isContextMenuVisible} onBackdropPress={handleContextMenuClose}>
+        <View style={styles.contextMenu}>
+          <Text onPress={() => handleContextMenuPress('Add CPU')}>Add CPU Widget</Text>
+          <Text onPress={() => handleContextMenuPress('Add GPU')}>Add GPU Widget</Text>
+          <Text onPress={() => handleContextMenuPress('Add MEM')}>Add Memory Widget</Text>
+          <Text onPress={() => handleContextMenuPress('Remove CPU')}>Remove CPU Widget</Text>
+          <Text onPress={() => handleContextMenuPress('Remove GPU')}>Remove GPU Widget</Text>
+          <Text onPress={() => handleContextMenuPress('Remove MEM')}>Remove Memory Widget</Text>
+          <Text onPress={handleContextMenuClose}>Close</Text>
         </View>
-      </Collapsible>
+      </Modal>
     </View>
   );
 };
