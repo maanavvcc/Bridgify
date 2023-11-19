@@ -1,7 +1,7 @@
 const initialState = {
   socket: null,
-  systemInfo: null,
-}
+  systemInfo: null
+};
 
 
 const rootReducer = (state = initialState, action) => {
