@@ -33,6 +33,7 @@ io.on('connection', (socket) => {
     // Generate a new key for the desktop connection
     serverKey = generateKey();
     connections[socket.id].desktop = socket.id;
+    connections[socket.id].connectionID = serverKey;
 
     // Inform the desktop client about the new key
     io.to(socket.id).emit('key', serverKey);
@@ -48,7 +49,16 @@ io.on('connection', (socket) => {
       mobileConnected += 1;
       console.log(mobileConnected)
       connections[socket.id].mobile = socket.id;
+      connections[socket.id].connectionID = serverKey;
       io.to(socket.id).emit('mobile-connected');
+      //inform desktop apps about modile connection
+      for (c in connections) 
+      {
+        if (connections[c].connectionID == serverKey && connections[c].hasOwnProperty('desktop'))
+        {
+          io.to(connections[c].desktop).emit('mobile-connected');
+        }
+      }
       console.log('Mobile connected successfully');
     } else {
       io.to(socket.id).emit('connection-error', 'Invalid key');
