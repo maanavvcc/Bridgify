@@ -3,6 +3,7 @@ const initialState = {
   systemInfo: null,
 }
 
+
 const rootReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_SOCKET':
