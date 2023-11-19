@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Electron App</title>
+  <title>Bridgify Desktop</title>
 </head>
 <body>
   <h1>Desktop Interface</h1>
@@ -33,6 +33,7 @@
 
     socket.on('mobile-connected', () => {
       keyContainer.innerHTML = '<p>Mobile device connected!</p>';
+      window.electron.changeWindow('change-view-shortcuts');
     });
 
     socket.on('button-pressed', (shortcut) => {
