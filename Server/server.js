@@ -6,7 +6,8 @@ const server = http.createServer(app);
 const io = new Server(server);
 const path = require('path');
 const si = require('systeminformation');
-let mobileConnected = 0; // Initialize mobileConnected as a variable
+let mobileConnected = 0; // Initialize mobileConnected as a variableS
+let systemData;
 
 const connections = {};
 const cors = require('cors');
@@ -45,9 +46,10 @@ io.on('connection', (socket) => {
 
     // Mobile device trying to connect
     if (mobileConnected === 0 && submittedKey === serverKey) {
-      mobileConnected += 1;
       console.log(mobileConnected)
       connections[socket.id].mobile = socket.id;
+      console.log(systemData)
+      io.to(socket.id).emit('system-info', systemData);
       io.to(socket.id).emit('mobile-connected');
       console.log('Mobile connected successfully');
     } else {
@@ -60,8 +62,6 @@ io.on('connection', (socket) => {
   // Handle disconnection
   socket.on('disconnect', () => {
     if (connections[socket.id] && connections[socket.id].mobile === socket.id) {
-      mobileConnected -= 1;
-      console.log(mobileConnected)
     }
     console.log('User disconnected:', socket.id);
     // Optionally, you can remove the connection object when a socket disconnects
@@ -86,7 +86,6 @@ setInterval(async () => {
     // Fetch GPU information
     const gpuInfo = await si.graphics();
     // Fetch CPU temperature information
-    const cpuTemperature = await si.cpuTemperature();
     // Fetch CPU utilization information
     const cpuLoad = await si.currentLoad();
 
@@ -95,17 +94,16 @@ setInterval(async () => {
       cpu: cpuInfo,
       memory: memInfo,
       gpu: gpuInfo,
-      temperatures: { cpu: cpuTemperature },
       utilization: { cpu: cpuLoad },
     };
 
     // Send system information to all connected sockets
+    systemData = systemInfo;
     io.emit('system-info', systemInfo);
-    console.log('System information sent to all connected sockets:');
   } catch (error) {
     console.error('Error fetching system information:', error.message);
   }
-}, 10000); // Fetch every 10 seconds
+}, 2000); // Fetch every 2 seconds
 
 function generateKey() {
   let key = '';
