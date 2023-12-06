@@ -2,58 +2,121 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Electron App</title>
-</head>
-<body>
-  <h1>Desktop Interface</h1>
-  <div id="key-container">
-    <p>Your connection key:</p>
-    <h2 id="connection-key">Generating...</h2>
-  </div>
-  <button id="reset-button" onclick="resetConnection()">Disconnect</button>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridgify</title>
+    <link rel="stylesheet" href="assets/main.css">
+  </head>
+  <body>
+    <section id="sidenav">
+      <div class="inner-sidebar">
+        <nav>
+          <ul>
+              <li><a onclick="sidebar_close()" id="closenav">Close &times;</a></li>
+              <br>
+              <li><a class="pagelinks" onclick="open_page(event, 'connection', 'Connect')">Connect</a></li>
+              <li><a class="pagelinks" onclick="open_page(event, 'customize', 'Customize')">Customize</a></li>
+              <li><a class="pagelinks" onclick="open_page(event, 'send-file', 'Send Files')">Send File</a></li>
+          </ul>
+        </nav>
+      </div>
+    </section>
 
-  <script src="https://cdn.socket.io/4.4.1/socket.io.js"></script>
-  <script>
-    const socket = io.connect('http://localhost:80');
-    const keyContainer = document.getElementById('key-container');
-    const connectionKeyElement = document.getElementById('connection-key');
+    <div id="wrapper"></div>
 
-    socket.on('connect', () => {
-      socket.emit('desktop-connect');
-    });
+    <section id="content">
+      <div class="page-info">
+        <a onclick="sidebar_open()" id="opennav">&#9776;</a>
+        <br>
+        <a id="page-title">Connect</a>
+      </div>
+      <div class="page">
+        <div id="connection" class="pagecontent">
+          <h1>Desktop Interface</h1>
+          <div id="key-container">
+            <p>Your connection key:</p>
+            <h2 id="connection-key">Generating...</h2>
+          </div>
+          <button id="reset-button" onclick="resetConnection()">Disconnect</button>
+        </div>
+        <div id="customize" class="pagecontent">
+            <a href="">Fill customize</a>
+        </div>
+        <div id="send-file" class="pagecontent">
+          <a href="">Fill send file</a>
+        </div>
+      </div>
+    </section>
+    
 
-    socket.on('key', (key) => {
-      connectionKeyElement.textContent = key;
-      keyContainer.innerHTML = `<p>Your connection key:</p><h2 id="connection-key">${key}</h2>`;
-    });
+    <script src="https://cdn.socket.io/4.4.1/socket.io.js"></script>
+    <script>
+      const socket = io.connect('http://localhost:80');
+      const keyContainer = document.getElementById('key-container');
+      const connectionKeyElement = document.getElementById('connection-key');
 
-    socket.on('mobile-connected', () => {
-      keyContainer.innerHTML = '<p>Mobile device connected!</p>';
-    });
+      socket.on('connect', () => {
+        socket.emit('desktop-connect');
+      });
 
-    socket.on('button-pressed', (shortcut) => {
-      keyContainer.innerHTML = '<p>BUTTON PRESSED: ' + shortcut + '</p>';
-      window.electron.sendShortcut(shortcut);
-    });
+      socket.on('key', (key) => {
+        connectionKeyElement.textContent = key;
+        keyContainer.innerHTML = `<p>Your connection key:</p><h2 id="connection-key">${key}</h2>`;
+      });
 
-    socket.on('mobile-disconnected', () => {
-      keyContainer.innerHTML = '<p>Mobile device disconnected!</p>';
-      // Reconnect or generate a new key if necessary
-      socket.emit('desktop-connect');
-    });
+      socket.on('mobile-connected', () => {
+        keyContainer.innerHTML = '<p>Mobile device connected!</p>';
+      });
 
-    function resetConnection() {
-      // Disconnect the socket on button press
-      socket.disconnect();
-      // Update UI
-      keyContainer.innerHTML = '<p>Connection reset. Generating new key...</p>';
-      // Reconnect or generate a new key if necessary
-      socket.connect();
-    }
-  </script>
-</body>
+      socket.on('button-pressed', (shortcut) => {
+        keyContainer.innerHTML = '<p>BUTTON PRESSED: ' + shortcut + '</p>';
+        window.electron.sendShortcut(shortcut);
+      });
+
+      socket.on('mobile-disconnected', () => {
+        keyContainer.innerHTML = '<p>Mobile device disconnected!</p>';
+        // Reconnect or generate a new key if necessary
+        socket.emit('desktop-connect');
+      });
+
+      function resetConnection() {
+        // Disconnect the socket on button press
+        socket.disconnect();
+        // Update UI
+        keyContainer.innerHTML = '<p>Connection reset. Generating new key...</p>';
+        // Reconnect or generate a new key if necessary
+        socket.connect();
+      }
+
+      function sidebar_open(){
+        document.getElementById("content").style.marginLeft = "12em";
+        document.getElementById("sidenav").style.width = "10em";
+        document.getElementById("sidenav").style.display = "block";
+        document.getElementById("opennav").style.display = "none";
+      }
+      function sidebar_close(){
+        document.getElementById("content").style.marginLeft = "0em";
+        document.getElementById("sidenav").style.display = "none";
+        document.getElementById("opennav").style.display = "inline-block";
+      }
+      
+      function open_page(evt, page_name, page_title){
+        var i,pagecontent,pagelinks;
+        pagecontent = document.getElementsByClassName("pagecontent");
+        for(i=0;i<pagecontent.length;i++){
+          pagecontent[i].style.display = "none";
+        }
+        pagelinks = document.getElementsByClassName("pagelinks");
+        for(i=0;i<pagelinks.length;i++){
+          pagelinks[i].className = pagelinks[i].className.replace(" active", "");
+        }
+        document.getElementById(page_name).style.display = "block";
+        evt.currentTarget.className += " active";
+        document.getElementById('page-title').textContent = page_title
+      }
+
+    </script>
+  </body>
 </html>

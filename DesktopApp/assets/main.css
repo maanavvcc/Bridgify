@@ -1,0 +1,170 @@
+
+#content{
+    padding: 0;
+    background: rgb(126, 161, 168);
+    height: 100vh;
+    display: block;
+    margin-left: 0em;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: -webkit-fill-available;
+    transition: margin-left .75s
+}
+#content>.page{
+    padding: 8px 16px;
+}
+#content>.page-info{
+    padding: 8px 16px;
+    background: rgb(42 94 124);
+    border-left-style: groove;
+    border-left-color: rgb(190 231 255);
+    border-bottom-style: groove;
+    border-bottom-color: rgb(190 231 255);
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#content>.page-info a{
+    color: rgba(255, 255, 255,.75);
+    display: inline-block;
+    letter-spacing: .05em;
+    line-height: 1.75;
+    outline: 0;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 1.5em;
+    font-weight: bold;
+    position: relative;
+    margin-right: auto;
+}
+
+#sidenav{
+    padding: .5em 1em .5em 1em;
+    background: rgb(42, 94, 124);
+    height: 100vh;
+    left: 0;
+    top: 0;
+    position: fixed;
+    text-align: right;
+    width: 10em;
+    z-index: 1000;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: none;
+    animation: animateleft 0.75s;
+    animation: animateright 0.75s;
+    transition: all .75s;
+}
+
+@keyframes animateleft {
+    from {
+        left: -300px;
+        opacity: 0
+    }
+
+    to {
+        left: 0;
+        opacity: 1
+    }
+}
+@keyframes animateright {
+    from {
+        right: -300px;
+        opacity: 0
+    }
+
+    to {
+        right: 0;
+        opacity: 1
+    }
+}
+
+#sidenav>.inner-sidebar{
+    display: flex;
+    justify-content: center;
+    transform: translateY(0);
+    transition: opacity 1s ease;
+    min-height: 100%;
+    opacity: 1;
+    width: 100%;
+}
+
+#sidenav nav>ul{
+    list-style: none;
+}
+#sidenav nav>ul>li{
+    transform: translateY(0);
+    transition: opacity .15s ease, transform .75s ease;
+    opacity: 1;
+    position: relative;
+}
+
+#sidenav nav a{
+    transition: color .2s ease;
+    margin: 0 0 3em 0;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    display: block;
+    font-size: .75em;
+    font-weight: bold;
+    letter-spacing: .2em;
+    line-height: 1.75;
+    outline: 0;
+    position: relative;
+    text-decoration: none;
+    text-transform: uppercase;
+    width: 100%;
+    white-space: nowrap;
+    cursor: pointer;
+    float: none;
+}
+
+#sidenav nav a:before,
+#sidenav nav a::after{
+    border-radius: 0.2em;
+    bottom: 0;
+    content: '';
+    height: 0.2em;
+    position: absolute;
+    right: 0;
+    width: 100%;
+}
+#sidenav nav a:before{
+    background: rgb(42, 94, 124);
+}
+#sidenav nav a:after {
+    background-image: linear-gradient(to right, rgb(18, 67, 95),rgb(12, 126, 192));
+    transition: max-width .1s ease;
+    max-width: 0;
+}
+
+#sidenav nav a:hover{
+    color: rgba(255, 255, 255, 0.75);
+}
+
+#sidenav nav a.active{
+    color: rgba(255, 255, 255);
+}
+
+#sidenav nav a:active:after{
+    max-width: 100%;
+}
+
+body.is-loading #sidenav>.inner {
+    opacity: 0
+}
+
+body.is-loading #sidenav nav ul li {
+    transform: translateY(2em);
+    opacity: 0
+}
+
+#customize{
+    display: none;
+}
+#send-file{
+    display: none;
+}
