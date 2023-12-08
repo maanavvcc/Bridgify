@@ -9,7 +9,6 @@ const ShortcutInfoListener = () => {
   useEffect(() => {
     if (socket) {
       socket.on('shortcut-info', (data) => {
-        console.log('useEffect: ' + data)
         dispatch(updateShortcutInfo(data));
       });
     }

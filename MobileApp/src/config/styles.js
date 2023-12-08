@@ -77,7 +77,7 @@ export const styles = StyleSheet.create({
     fontSize: 30,
   },
   shortcutBackground: {
-    height: '12%', 
+    height: '25%', 
     backgroundColor: 'lightgreen', 
     borderRadius: 10,
     marginTop: 16,

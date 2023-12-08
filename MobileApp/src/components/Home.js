@@ -101,10 +101,6 @@ const HomeScreen = ({ route, navigation }) => {
     socket.emit('shortcut-pressed', {id: shortcutID});
   }
 
-  const remoeExistingShortcuts = () => {
-    $('.container').find('.shortcut').remove();
-  }
-
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -144,6 +140,16 @@ const HomeScreen = ({ route, navigation }) => {
             <Text style={styles.widgetText}>{`Total Memory:${memInfo.total}\n\nFree: ${memInfo.free}  |  Used: ${memInfo.used}\n\nMemory Load: ${memInfo.load}`}</Text>
           </View>
           )}
+          <View id='shortcutContainer'>
+            {
+              shortcutInfo &&
+              Object.values(shortcutInfo).map((shortcut) => 
+                <TouchableOpacity class='shortcut' key={'shortcutBackgroundID'+shortcut.id} style={styles.shortcutBackground} onPress={() => handleShortcutSelection(shortcut.id)}>
+                  <Text class='shortcut' style={styles.shortcutText} key={'shortcutID' + shortcut.id}>{shortcut.name}</Text>
+                </TouchableOpacity>
+              )
+            }
+          </View>
       </TouchableOpacity>
 
       <Modal isVisible={isContextMenuVisible} onBackdropPress={handleContextMenuClose}>
@@ -176,16 +182,7 @@ const HomeScreen = ({ route, navigation }) => {
         </View>
       </Modal>
 
-      <View id='shortcutContainer'>
-          {
-            shortcutInfo && remoeExistingShortcuts() &&
-            Object.values(shortcutInfo).map((shortcut) => 
-              <TouchableOpacity class='shortcut' key={'shortcutBackgroundID'+shortcut.id} style={styles.shortcutBackground} onPress={() => handleShortcutSelection(shortcut.id)}>
-                <Text class='shortcut' style={styles.shortcutText} key={'shortcutID' + shortcut.id}>{shortcut.name}</Text>
-              </TouchableOpacity>
-            )
-          }
-      </View>
+      
     </View>
   );
 };
