@@ -1,6 +1,7 @@
 const initialState = {
   socket: null,
-  systemInfo: null
+  systemInfo: null,
+  shortcutInfo: null
 };
 
 
@@ -16,6 +17,14 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         systemInfo: {
           ...state.systemInfo,
+          ...action.payload,
+        },
+      };
+    case 'UPDATE_SHORTCUT_INFO':
+      return {
+        ...state,
+        shortcutInfo: {
+          ...state.shortcutInfo,
           ...action.payload,
         },
       };

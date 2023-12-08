@@ -48,4 +48,16 @@ export const styles = StyleSheet.create({
   widgetText: {
     margin: 16, 
   },
+  shortcutText: {
+    margin: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 30,
+  },
+  shortcutBackground: {
+    height: '12%', 
+    backgroundColor: 'lightgreen', 
+    borderRadius: 10,
+    marginTop: 16, 
+  }
 });

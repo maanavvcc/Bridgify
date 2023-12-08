@@ -77,6 +77,18 @@ io.on('connection', (socket) => {
     // Optionally, you can remove the connection object when a socket disconnects
     delete connections[socket.id];
   });
+
+  //Handle Info Transfer to Mobile
+  socket.on('send-shortcuts', (shortcuts) => {
+    console.log('Server is broadcasting this to the mobile ', shortcuts);
+    socket.broadcast.emit('shortcut-info', shortcuts);
+  });
+
+  //Handle Shortcut Notification to Desktop
+  socket.on('shortcut-pressed', (shortcut) => {
+    console.log('Server is broadcasting this to the desktop ', shortcut);
+    socket.broadcast.emit('activate-shortcut', shortcut);
+  });
 });
 
 setInterval(async () => {

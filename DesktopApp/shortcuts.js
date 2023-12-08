@@ -20,7 +20,6 @@ window.electron.getNames().then((value) => dispShortcuts(value));
 
 function dispShortcuts(shortcuts)
 {
-    console.log(shortcuts);
     shortcutSelector.innerHTML = "<option value='add-shortcut'>Add Shortcut</option>" + shortcuts.map((e) => {
         temp = "<option value='" + e.id + "'>" + e.name + "</option>";
         return temp;
@@ -81,7 +80,12 @@ function resetConnection() {
 function addShortcut() 
 {
     console.log('Adding ' + shortcutName + ' to shortcut list...');
-    window.electron.addShortcut(shortcutName.value, shortcutDesc.value, shortcutType.value, shortcutContext.value);
+    let context = '';
+    if (shortcutType.value == 'script')
+    {
+        context = shortcutContext.files[0].path;
+    }
+    window.electron.addShortcut(shortcutName.value, shortcutDesc.value, shortcutType.value, context);
             
     resetInputFields();
 
@@ -91,6 +95,7 @@ function addShortcut()
 function editShortcut()
 {
     id = shortcutSelector.value;
+    if (id == 'add-shortcut') {return;}
     console.log('Editing shortcut by id: ' + id + ' to database...');
     window.electron.editShortcut(id, shortcutName.value, shortcutDesc.value, shortcutType.value, shortcutContext.value);
 
@@ -102,6 +107,7 @@ function editShortcut()
 function removeShortcut()
 {
     id = shortcutSelector.value;
+    if (id == 'add-shortcut') {return;}
     console.log('Removing shortcut by id: ' + id + ' from database...');
     window.electron.removeShortcut(id);
 
@@ -121,5 +127,20 @@ function resetInputFields()
 
 function updateMobile()
 {
-    
+    window.electron.getNames().then((value) => {
+        socket.emit('send-shortcuts', value.map((e) => { return {id: e.id, name: e.name} }))
+    });
+}
+
+socket.on('activate-shortcut', (shortcut) => {
+    console.log('Desktop was notified that the shortcut with id: ' + shortcut.id + ' was pressed...');
+    window.electron.getShortcut(shortcut.id).then((value) => executeShortcut(value));
+});
+
+function executeShortcut(shortcut)
+{
+    if (shortcut.type == 'script')
+    {
+        window.electron.runScript(shortcut.context);
+    }
 }

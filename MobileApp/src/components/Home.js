@@ -6,12 +6,14 @@ import 'react-native-gesture-handler';
 import { setSocket } from '../config/actions.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { styles } from '../config/styles.js';
-import * as SysInfo from '../config/sysinfo.js'
+import * as SysInfo from '../config/sysinfo.js';
+import * as Shortcuts from '../config/shortcut.js';
 
 const HomeScreen = ({ route, navigation }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
   const systemInfo = useSelector((state) => state.systemInfo);
+  const shortcutInfoSelector = useSelector((state) => state.shortcutInfo);
   const socket = useSelector((state) => state.socket);
   const dispatch = useDispatch();
   const gpuInfo = SysInfo.getGPUInfo(systemInfo);
@@ -20,7 +22,7 @@ const HomeScreen = ({ route, navigation }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isVisible2, setIsVisible2] = useState(false);
   const [isVisible3, setIsVisible3] = useState(false);
-
+  const shortcutInfo = Shortcuts.getShortcuts(shortcutInfoSelector);
 
   const handleDisconnect = () => {
     if (socket) {
@@ -64,6 +66,10 @@ const HomeScreen = ({ route, navigation }) => {
 
     console.log(`Selected option: ${option}`);
   };
+
+  const handleShortcutSelection = (shortcutID) => {
+    socket.emit('shortcut-pressed', {id: shortcutID});
+  }
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -113,6 +119,17 @@ const HomeScreen = ({ route, navigation }) => {
           <Text onPress={handleContextMenuClose}>Close</Text>
         </View>
       </Modal>
+
+      <View id='shortcutContainer'>
+          {
+            shortcutInfo &&
+            Object.values(shortcutInfo).map((shortcut) => 
+              <TouchableOpacity key={'shortcutBackgroundID'+shortcut.id} style={styles.shortcutBackground} onPress={() => handleShortcutSelection(shortcut.id)}>
+                <Text style={styles.shortcutText} key={'shortcutID' + shortcut.id}>{shortcut.name}</Text>
+              </TouchableOpacity>
+            )
+          }
+      </View>
     </View>
   );
 };

@@ -69,6 +69,7 @@ export const getMemInfo = (systemInfo) => {
 }
 
 export const getCPUInfo = (systemInfo) => {
+  //console.log(systemInfo);
   if (!systemInfo || !systemInfo.cpu) {
     return new CPUInfo('N/A', 'N/A', 'N/A', 'N/A', 'N/A');
   }
