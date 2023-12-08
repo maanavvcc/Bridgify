@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "better-sqlite3": "^9.1.1",
     "electron": "^27.0.2",
-    "robotjs": "^0.6.0"
+    "robotjs": "^0.6.0",
+    "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.3.0",
