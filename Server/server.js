@@ -26,6 +26,7 @@ io.on('connection', (socket) => {
 
   socket.on('desktop-connect', () => {
     // Generate a new key for the desktop connection
+
     generateKey().then(({ plaintextKey, hashedKey }) => {
       serverKey = hashedKey; // Update serverKey with hashed key
       connections[socket.id].desktop = socket.id;

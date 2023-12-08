@@ -9,9 +9,11 @@ let connectionKeyEngine; // Store a reference to the connection key engine
 
 function createWindow() {
   mainWindow = new BrowserWindow({
+    title: 'Bridgify Desktop',
     width: 800,
     height: 600,
     webPreferences: {
+      sandbox: false,
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
     },
@@ -69,6 +71,14 @@ function initializeApp() {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 }
+
+ipcMain.on('change-view-shortcuts', () => {
+  BrowserWindow.getAllWindows()[0].loadFile('shortcuts.html');
+});
+
+ipcMain.on('change-view-disconnect', () => {
+  BrowserWindow.getAllWindows()[0].loadFile('index.html');
+});
 
 app.whenReady().then(initializeApp);
 
