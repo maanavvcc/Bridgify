@@ -11,10 +11,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+
     "better-sqlite3": "^9.1.1",
+    "sqlite3": "^5.1.6",
+    "axios": "^1.6.2",
     "electron": "^27.0.2",
-    "robotjs": "^0.6.0",
-    "sqlite3": "^5.1.6"
+    "esm": "^3.2.25",
+    "form-data": "^4.0.0",
+    "node-fetch": "^3.3.2",
+    "robotjs": "^0.6.0"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.3.0",
