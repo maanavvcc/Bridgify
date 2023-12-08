@@ -5,27 +5,49 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
+    backgroundColor: '#161616'
   },
   menu: {
     position: 'absolute',
     top: 0,
     right: 0,
     zIndex: 1,
-    backgroundColor: 'white', // Example background color
+    backgroundColor: 'transparent', // Example background color
     padding: 10,
     borderRadius: 5,
     elevation: 5,
   },
+  button: {
+    backgroundColor: '#7ac68a',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
   buttonText: {
-    color: 'black', // Example text color
-    fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  connect: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    backgroundColor: '#161616',
+    color: 'white'
+  },
+  container: {
+    flex: 1,
+    paddingTop: 20, 
+    flexDirection: 'column',
+    backgroundColor: '#161616'
   },
   mainContent: {
     flex: 1,
     zIndex: -1,
     flexDirection: 'column',
     margin: 0,
-    padding: 0
+    padding: 0,
+    backgroundColor: '#161616'
   },
   widget1: { 
     height: '20%', 
@@ -48,4 +70,7 @@ export const styles = StyleSheet.create({
   widgetText: {
     margin: 16, 
   },
+  contextMenu: {
+    color: 'white'
+  }
 });
