@@ -1,28 +1,22 @@
 const express = require('express');
 const http = require('http');
+const multer = require('multer');
 const { Server } = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const path = require('path');
 const si = require('systeminformation');
+const fs = require('fs');
 const bcrypt = require('bcrypt');
 let mobileConnected = 0; // Initialize mobileConnected as a variable
-
+let serverKey = generateKey();
+const port = 3000;
 const connections = {};
 const cors = require('cors');
 app.use(cors());
 
-// Static Serves (Mobile Serves)
-app.use(express.static('public'));
 
-app.get('/connections', (req, res) => {
-  res.json(connections);
-});
-
-app.use('/', express.static(path.join(__dirname, '../', 'WebApp', 'src')));
-
-let serverKey = generateKey();
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
@@ -77,6 +71,63 @@ io.on('connection', (socket) => {
     // Optionally, you can remove the connection object when a socket disconnects
     delete connections[socket.id];
   });
+});
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// New route to get a list of available files
+app.get('/getFiles', (req, res) => {
+  const uploadsDir = path.join(__dirname, 'uploads');
+
+  // Read the contents of the 'uploads' directory
+  fs.readdir(uploadsDir, (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    // Send the list of files as a JSON response
+    console.log(files)
+    res.json(files);
+  });
+});
+
+// New route to handle file downloads
+app.get('/download/:fileName', (req, res) => {
+  const fileName = req.params.fileName;
+  const filePath = path.join(__dirname, 'uploads', fileName);
+
+  // Set appropriate headers for the response
+  res.setHeader('Content-disposition', `attachment; filename=${fileName}`);
+  res.setHeader('Content-type', 'application/octet-stream');
+
+  // Pipe the file stream to the response
+  const fileStream = fs.createReadStream(filePath);
+  fileStream.pipe(res);
+});
+
+app.post('/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file received' });
+  }
+
+  res.json({ message: 'File uploaded successfully' });
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
 
 setInterval(async () => {
