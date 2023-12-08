@@ -10,21 +10,38 @@
 </head>
 <body>
     <h1>Shortcut Home Page</h1>
-    <button onclick="">Add Shortcut</button>
-    <button onclick="resetConnection()">Disconnect</button>
+    
+    <select name='shortcut-selection' id='shortcut-selection' onchange='shortcutChange()'>
+        <option value='add-shortcut'>Add Shortcut</option>
+    </select>
+
+    <div id='addShortcutForm'>
+        <h4 id='lbl-add-shortcut'>Add Shortcut</h4>
+        <h4 id='lbl-edit-shortcut'>Edit Shortcut</h4>
+        
+        <label for='shortcut-name'>Name: </label><br>
+        <input type='text' id='shortcut-name' name='shortcut-name'><br>
+
+        <label for='shortcut-desc'>Description: </label><br>
+        <input type='text' id='shortcut-desc' name='shortcut-desc'><br>
+        
+        <label for='shortcut-type'>Shortcut Type: </label><br>
+        <select name='shortcut-type' id='shortcut-type'>
+            <option value='script'>Script</option>
+        </select><br>
+        
+        <label for='shortcut-context'>Context: </label><br>
+        <input type="file" id="shortcut-context" name="shortcut-context"><br>
+
+        <button onclick="addShortcut()" id='btn-add-shortcut'>Add Shortcut</button>
+        <button onclick="editShortcut()" id='btn-edit-shortcut'>Edit Shortcut</button>
+        <button onclick="removeShortcut()" id='btn-remove-shortcut'>Remove Shortcut</button>
+    </div>
+    
     <div id="shortcut-list"></div>
-    <script>
-        const shortcutList = document.getElementById('shortcut-list');
+    
+    <button onclick="updateMobile()">Update Mobile</button>
+    <button onclick="resetConnection()">Disconnect</button>
 
-        shortcuts = window.electron.getNames();
-        console.log(shortcuts);
-        shortcutList.innerHTML = shortcuts.map((e) => {
-            temp = e.id.toString() + ", " + e.name + ", " + e.desc + ", " + e.type + ", " + e.context;
-            return temp;
-        }).join("<br />");
-
-        function resetConnection() {
-            window.electron.changeWindow('change-view-disconnect');
-        } 
-    </script>
+    <script src="shortcuts.js"></script>
 </body>
