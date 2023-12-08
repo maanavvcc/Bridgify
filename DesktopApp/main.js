@@ -1,5 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const axios = require('axios');
+const fs = require('fs');
 const { setupConnectionKeyEngine } = require('./ConnectionKeyEngine/connectionKeyEngine');
 
 let mainWindow;
@@ -13,10 +15,39 @@ function createWindow() {
     webPreferences: {
       sandbox: false,
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
     },
   });
 
   mainWindow.loadFile('index.html');
+
+  ipcMain.on('upload-file', async (event, filePath, name) => {
+    try {
+      const fileData = fs.readFileSync(filePath);
+      const formData = new FormData();
+  
+      // Convert Buffer to Blob
+      const blob = new Blob([fileData], { type: 'application/octet-stream' });
+  
+      // Append the file to FormData
+      formData.append('file', blob, name);
+  
+      // Use fetch API for the HTTP request
+      const response = await fetch('http://localhost:3000/upload', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (response.ok) {
+        event.reply('file-uploaded', 'File uploaded successfully');
+      } else {
+        throw new Error(`Failed to upload file. Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error.message);
+      event.reply('file-upload-error', 'Error uploading file');
+    }
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;

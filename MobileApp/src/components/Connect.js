@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button } from 'react-native';
+import { View, TextInput,Image, TouchableOpacity, Text, Button } from 'react-native';
 import io from 'socket.io-client';
 import { useSelector, useDispatch } from 'react-redux';
 import config from '../config/config.json';
+import { styles } from '../config/styles.js';
 import { setSocket } from '../config/actions.js'; // Assuming config.json exports an object
 
 const Connect = ({ navigation }) => {
@@ -11,7 +12,7 @@ const Connect = ({ navigation }) => {
   const systemInfo = useSelector((state) => state.systemInfo);
   
   const handleConnect = () => {
-    const socket = io(config.server.ip);
+    const socket = io(config.server.ip+":80");
 
     // Move the acknowledgment logic to the server side
     socket.on('mobile-connected', () => {
@@ -42,15 +43,18 @@ const Connect = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={styles.connect}>
+      <Image source={require('../assets/disconnected.png')} style={{ width: 100, height: 100}} />
       <TextInput
         style={{
           height: 40,
+          marginTop: 40, 
           borderColor: 'gray',
           borderWidth: 1,
           width: '80%',
           marginBottom: 20,
           padding: 10,
+          color: 'white'
         }}
         placeholder="Enter Security Key"
         value={securityKey}
@@ -62,7 +66,9 @@ const Connect = ({ navigation }) => {
         keyboardType="numeric"
         maxLength={6}
       />
-      <Button title="Connect" onPress={handleConnect} />
+      <TouchableOpacity style={styles.button} onPress={handleConnect}>
+        <Text style={styles.buttonText}>connect</Text>
+      </TouchableOpacity>
     </View>
   );
 };

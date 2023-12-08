@@ -75,7 +75,22 @@
           <button onclick="resetConnection()">Disconnect</button>
         </div>
         <div id="send-file" class="pagecontent">
-          <a href="">Fill send file</a>
+          <input type="file" id="fileInput" />
+          <button onclick="uploadFile()">Upload File</button>
+        
+          <script>
+            function uploadFile() {
+              const fileInput = document.getElementById('fileInput');
+              const file = fileInput.files[0];
+        
+              if (file) {
+                window.electron.ipcRenderer.send('upload-file', file.path, file.name);
+                console.log(file.path, file.name)
+              } else {
+                console.error('No file selected');
+              }
+            }
+          </script>
         </div>
       </div>
     </section>
