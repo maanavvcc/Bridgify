@@ -51,16 +51,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "stretch", // Align items along the cross-axis (stretch to fill the width)
+    alignItems: "stretch", 
     padding: 20,
+    backgroundColor: "#161616",
+    color: "white",
   },
   button: {
-    flex: 1, // Each button takes up equal portions of the available space
+    flex: 1, 
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#3498db",
-    borderRadius: 10, // Adjust the borderRadius to make rounded corners
-    marginBottom: 10, // Add marginBottom for spacing between buttons
+    backgroundColor: "#52400f",
+    borderRadius: 10,
+    marginBottom: 10,
   },
   buttonText: {
     color: "white",
