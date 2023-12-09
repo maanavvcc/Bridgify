@@ -5,6 +5,7 @@ import Connect from "./src/components/Connect";
 import Home from "./src/components/Home";
 import Navigate from "./src/components/Navigation";
 import Mouse from "./src/components/Mouse";
+import Keyboard from "./src/components/Keyboard.js";
 import SystemInfoListener from "./src/config/sysinfo.js";
 import ShortcutInfoListener from "./src/config/shortcut.js";
 import store from "./src/config/store.js";
@@ -25,6 +26,7 @@ const App = () => {
             <Stack.Screen name="Navigate" component={Navigate} />
             <Stack.Screen name="Performance" component={Home} />
             <Stack.Screen name="Mouse" component={Mouse} />
+            <Stack.Screen name="Keyboard" component={Keyboard} />
           </Stack.Navigator>
         </GestureHandlerRootView>
       </NavigationContainer>
