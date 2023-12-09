@@ -78,6 +78,12 @@ io.on("connection", (socket) => {
     socket.on("mouse-right", () => {
       robot.mouseClick("right", false);
     });
+    socket.on("text", (text) => {
+      robot.keyTap(text);
+    });
+    socket.on("backspace", () => {
+      robot.keyTap("backspace");
+    });
   });
 
   // Handle disconnection
