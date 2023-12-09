@@ -33,6 +33,13 @@ const NavScreen = ({ route, navigation }) => {
         <Text style={styles.buttonText}>Mousepad</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("Keyboard")}
+      >
+        <Text style={styles.buttonText}>Keyboard</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.button} onPress={handleDisconnect}>
         <Text style={styles.buttonText}>Disconnect</Text>
       </TouchableOpacity>
