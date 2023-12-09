@@ -7,6 +7,13 @@ const NavScreen = ({ route, navigation }) => {
   const socket = useSelector((state) => state.socket);
   const dispatch = useDispatch();
 
+    // Remove the header
+    React.useLayoutEffect(() => {
+      navigation.setOptions({
+        headerShown: false,
+      });
+    }, [navigation]);
+
   const handleDisconnect = () => {
     if (socket) {
       socket.disconnect();
