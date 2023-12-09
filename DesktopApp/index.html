@@ -3,22 +3,42 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bridgify</title>
-    <link rel="stylesheet" href="assets/main.css">
+    <link rel="stylesheet" href="assets/main.css" />
   </head>
   <body>
     <section id="sidenav">
       <div class="inner-sidebar">
         <nav>
           <ul>
-              <li><a onclick="sidebar_close()" id="closenav">Close &times;</a></li>
-              <br>
-              <li><a class="pagelinks" onclick="open_page(event, 'connection', 'Connect')">Connect</a></li>
-              <li><a class="pagelinks" onclick="open_page(event, 'customize', 'Customize')">Customize</a></li>
-              <li><a class="pagelinks" onclick="open_page(event, 'send-file', 'Send Files')">Send File</a></li>
+            <li>
+              <a onclick="sidebar_close()" id="closenav">Close &times;</a>
+            </li>
+            <br />
+            <li>
+              <a
+                class="pagelinks"
+                onclick="open_page(event, 'connection', 'Connect')"
+                >Connect</a
+              >
+            </li>
+            <li>
+              <a
+                class="pagelinks"
+                onclick="open_page(event, 'customize', 'Customize')"
+                >Customize</a
+              >
+            </li>
+            <li>
+              <a
+                class="pagelinks"
+                onclick="open_page(event, 'send-file', 'Send Files')"
+                >Send File</a
+              >
+            </li>
           </ul>
         </nav>
       </div>
@@ -29,7 +49,7 @@
     <section id="content">
       <div class="page-info">
         <a onclick="sidebar_open()" id="opennav">&#9776;</a>
-        <br>
+        <br />
         <a id="page-title">Connect</a>
       </div>
       <div class="page">
@@ -39,130 +59,119 @@
             <p>Your connection key:</p>
             <h2 id="connection-key">Generating...</h2>
           </div>
-          <button id="reset-button" onclick="resetConnection()">Disconnect</button>
+          <button id="reset-button" onclick="resetConnection()">
+            Disconnect
+          </button>
         </div>
         <div id="customize" class="pagecontent">
           <h1>Shortcut Home Page</h1>
-          <select name='shortcut-selection' id='shortcut-selection' onchange='shortcutChange()'>
-              <option value='add-shortcut'>Add Shortcut</option>
+          <select
+            name="shortcut-selection"
+            id="shortcut-selection"
+            onchange="shortcutChange()"
+          >
+            <option value="add-shortcut">Add Shortcut</option>
           </select>
-          <div id='addShortcutForm'>
-              <h4 id='lbl-add-shortcut'>Add Shortcut</h4>
-              <h4 id='lbl-edit-shortcut'>Edit Shortcut</h4>
-    
-              <label for='shortcut-name'>Name: </label><br>
-              <input type='text' id='shortcut-name' name='shortcut-name'><br>
-      
-              <label for='shortcut-desc'>Description: </label><br>
-              <input type='text' id='shortcut-desc' name='shortcut-desc'><br>
-              
-              <label for='shortcut-type'>Shortcut Type: </label><br>
-              <select name='shortcut-type' id='shortcut-type'>
-                  <option value='script'>Script</option>
-              </select><br>
-              
-              <label for='shortcut-context'>Context: </label><br>
-              <input type="file" id="shortcut-context" name="shortcut-context"><br>
-      
-              <button onclick="addShortcut()" id='btn-add-shortcut'>Add Shortcut</button>
-              <button onclick="editShortcut()" id='btn-edit-shortcut'>Edit Shortcut</button>
-              <button onclick="removeShortcut()" id='btn-remove-shortcut'>Remove Shortcut</button>
+          <div id="addShortcutForm">
+            <h4 id="lbl-add-shortcut">Add Shortcut</h4>
+            <h4 id="lbl-edit-shortcut">Edit Shortcut</h4>
+
+            <label for="shortcut-name">Name: </label><br />
+            <input type="text" id="shortcut-name" name="shortcut-name" /><br />
+
+            <label for="shortcut-desc">Description: </label><br />
+            <input type="text" id="shortcut-desc" name="shortcut-desc" /><br />
+
+            <label for="shortcut-type">Shortcut Type: </label><br />
+            <select name="shortcut-type" id="shortcut-type">
+              <option value="script">Script</option></select
+            ><br />
+
+            <label for="shortcut-context">Context: </label><br />
+            <input
+              type="file"
+              id="shortcut-context"
+              name="shortcut-context"
+            /><br />
+
+            <button onclick="addShortcut()" id="btn-add-shortcut">
+              Add Shortcut
+            </button>
+            <button onclick="editShortcut()" id="btn-edit-shortcut">
+              Edit Shortcut
+            </button>
+            <button onclick="removeShortcut()" id="btn-remove-shortcut">
+              Remove Shortcut
+            </button>
           </div>
-          
+
           <div id="shortcut-list"></div>
-          
+
           <button onclick="updateMobile()">Update Mobile</button>
           <button onclick="resetConnection()">Disconnect</button>
         </div>
         <div id="send-file" class="pagecontent">
           <input type="file" id="fileInput" />
           <button onclick="uploadFile()">Upload File</button>
-        
+
           <script>
             function uploadFile() {
-              const fileInput = document.getElementById('fileInput');
+              const fileInput = document.getElementById("fileInput");
               const file = fileInput.files[0];
-        
+
               if (file) {
-                window.electron.ipcRenderer.send('upload-file', file.path, file.name);
-                console.log(file.path, file.name)
+                window.electron.ipcRenderer.send(
+                  "upload-file",
+                  file.path,
+                  file.name
+                );
+                console.log(file.path, file.name);
               } else {
-                console.error('No file selected');
+                console.error("No file selected");
               }
             }
           </script>
         </div>
       </div>
     </section>
-    
 
     <script src="https://cdn.socket.io/4.4.1/socket.io.js"></script>
     <script>
-      const socket = io.connect('http://localhost:80');
-      const keyContainer = document.getElementById('key-container');
-      const connectionKeyElement = document.getElementById('connection-key');
+      const socket = io.connect("http://localhost:80");
+      const keyContainer = document.getElementById("key-container");
+      const connectionKeyElement = document.getElementById("connection-key");
 
-      socket.on('connect', () => {
-        socket.emit('desktop-connect');
+      socket.on("connect", () => {
+        socket.emit("desktop-connect");
       });
-
-      socket.on('key', (key) => {
+      socket.on("key", (key) => {
         connectionKeyElement.textContent = key;
         keyContainer.innerHTML = `<p>Your connection key:</p><h2 id="connection-key">${key}</h2>`;
       });
-
-      socket.on('mobile-connected', () => {
-        keyContainer.innerHTML = '<p>Mobile device connected!</p>';
+      socket.on("mobile-connected", () => {
+        keyContainer.innerHTML = "<p>Mobile device connected!</p>";
       });
-
-      socket.on('button-pressed', (shortcut) => {
-        keyContainer.innerHTML = '<p>BUTTON PRESSED: ' + shortcut + '</p>';
+      socket.on("button-pressed", (shortcut) => {
+        keyContainer.innerHTML = "<p>BUTTON PRESSED: " + shortcut + "</p>";
         window.electron.sendShortcut(shortcut);
       });
-
-      socket.on('mobile-disconnected', () => {
-        keyContainer.innerHTML = '<p>Mobile device disconnected!</p>';
+      socket.on("mobile-disconnected", () => {
+        keyContainer.innerHTML = "<p>Mobile device disconnected!</p>";
         // Reconnect or generate a new key if necessary
-        socket.emit('desktop-connect');
+        socket.emit("desktop-connect");
       });
 
       function resetConnection() {
         // Disconnect the socket on button press
         socket.disconnect();
         // Update UI
-        keyContainer.innerHTML = '<p>Connection reset. Generating new key...</p>';
+        keyContainer.innerHTML =
+          "<p>Connection reset. Generating new key...</p>";
         // Reconnect or generate a new key if necessary
         socket.connect();
       }
-
-      function sidebar_open(){
-        document.getElementById("content").style.marginLeft = "12em";
-        document.getElementById("sidenav").style.width = "10em";
-        document.getElementById("sidenav").style.display = "block";
-        document.getElementById("opennav").style.display = "none";
-      }
-      function sidebar_close(){
-        document.getElementById("content").style.marginLeft = "0em";
-        document.getElementById("sidenav").style.display = "none";
-        document.getElementById("opennav").style.display = "inline-block";
-      }
-      
-      function open_page(evt, page_name, page_title){
-        var i,pagecontent,pagelinks;
-        pagecontent = document.getElementsByClassName("pagecontent");
-        for(i=0;i<pagecontent.length;i++){
-          pagecontent[i].style.display = "none";
-        }
-        pagelinks = document.getElementsByClassName("pagelinks");
-        for(i=0;i<pagelinks.length;i++){
-          pagelinks[i].className = pagelinks[i].className.replace(" active", "");
-        }
-        document.getElementById(page_name).style.display = "block";
-        evt.currentTarget.className += " active";
-        document.getElementById('page-title').textContent = page_title
-      }
-
     </script>
     <script src="shortcuts.js"></script>
+    <script src="renderer.js"></script>
   </body>
 </html>

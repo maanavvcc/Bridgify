@@ -1,146 +1,170 @@
+const shortcutList = document.getElementById("shortcut-list");
+const shortcutSelector = document.getElementById("shortcut-selection");
 
-const shortcutList = document.getElementById('shortcut-list');
-const shortcutSelector = document.getElementById('shortcut-selection');
-      
-const LBLaddShortcut =document.getElementById('lbl-add-shortcut');
-const LBLeditShortcut =document.getElementById('lbl-edit-shortcut');
+const LBLaddShortcut = document.getElementById("lbl-add-shortcut");
+const LBLeditShortcut = document.getElementById("lbl-edit-shortcut");
 
-const BTNaddShortcut =document.getElementById('btn-add-shortcut');
-const BTNeditShortcut =document.getElementById('btn-edit-shortcut');
-const BTNremoveShortcut =document.getElementById('btn-remove-shortcut');
+const BTNaddShortcut = document.getElementById("btn-add-shortcut");
+const BTNeditShortcut = document.getElementById("btn-edit-shortcut");
+const BTNremoveShortcut = document.getElementById("btn-remove-shortcut");
 
+const shortcutName = document.getElementById("shortcut-name");
+const shortcutDesc = document.getElementById("shortcut-desc");
+const shortcutType = document.getElementById("shortcut-type");
+const shortcutContext = document.getElementById("shortcut-context");
 
-const shortcutName = document.getElementById('shortcut-name');
-const shortcutDesc = document.getElementById('shortcut-desc');
-const shortcutType = document.getElementById('shortcut-type');
-const shortcutContext = document.getElementById('shortcut-context');
- 
-changeEditMode(isEditing = false);
+changeEditMode((isEditing = false));
 window.electron.getNames().then((value) => dispShortcuts(value));
 
-function dispShortcuts(shortcuts)
-{
-    shortcutSelector.innerHTML = "<option value='add-shortcut'>Add Shortcut</option>" + shortcuts.map((e) => {
+function dispShortcuts(shortcuts) {
+  shortcutSelector.innerHTML =
+    "<option value='add-shortcut'>Add Shortcut</option>" +
+    shortcuts
+      .map((e) => {
         temp = "<option value='" + e.id + "'>" + e.name + "</option>";
         return temp;
-    }).join();
-    shortcutList.innerHTML = shortcuts.map((e) => {
-        temp = e.id.toString() + ", " + e.name + ", " + e.desc + ", " + e.type + ", " + e.context;
-        return temp;
-    }).join("<br />");
+      })
+      .join();
+  shortcutList.innerHTML = shortcuts
+    .map((e) => {
+      temp =
+        e.id.toString() +
+        ", " +
+        e.name +
+        ", " +
+        e.desc +
+        ", " +
+        e.type +
+        ", " +
+        e.context;
+      return temp;
+    })
+    .join("<br />");
 }
 
-function shortcutChange()
-{
-    if (shortcutSelector.value == 'add-shortcut')
-    {
-        resetInputFields();
-        changeEditMode(isEditing = false);
-        return;
-    }
-    window.electron.getShortcut(shortcutSelector.value).then((value) => updateShortcutFields(value));
+function shortcutChange() {
+  if (shortcutSelector.value == "add-shortcut") {
+    resetInputFields();
+    changeEditMode((isEditing = false));
+    return;
+  }
+  window.electron
+    .getShortcut(shortcutSelector.value)
+    .then((value) => updateShortcutFields(value));
 }
 
-function updateShortcutFields(shortcut) 
-{
-    shortcutName.value = shortcut.name;
-    shortcutDesc.value = shortcut.desc;
-    shortcutType.value = shortcut.type;
-    if (shortcut.type != 'script')
-    {
-        shortcutContext.value = shortcut.context;
-    }
-    changeEditMode(isEditing = true);
+function updateShortcutFields(shortcut) {
+  shortcutName.value = shortcut.name;
+  shortcutDesc.value = shortcut.desc;
+  shortcutType.value = shortcut.type;
+  if (shortcut.type != "script") {
+    shortcutContext.value = shortcut.context;
+  }
+  changeEditMode((isEditing = true));
 }
 
-function changeEditMode(isEditing)
-{
-    if (isEditing)
-    {
-        LBLaddShortcut.hidden = true;
-        LBLeditShortcut.hidden = false;
-        BTNaddShortcut.hidden = true;
-        BTNeditShortcut.hidden = false;
-        BTNremoveShortcut.hidden = false;
-    }
-    else
-    {
-        LBLaddShortcut.hidden = false;
-        LBLeditShortcut.hidden = true;
-        BTNaddShortcut.hidden = false;
-        BTNeditShortcut.hidden = true;
-        BTNremoveShortcut.hidden = true;
-    }
+function changeEditMode(isEditing) {
+  if (isEditing) {
+    LBLaddShortcut.hidden = true;
+    LBLeditShortcut.hidden = false;
+    BTNaddShortcut.hidden = true;
+    BTNeditShortcut.hidden = false;
+    BTNremoveShortcut.hidden = false;
+  } else {
+    LBLaddShortcut.hidden = false;
+    LBLeditShortcut.hidden = true;
+    BTNaddShortcut.hidden = false;
+    BTNeditShortcut.hidden = true;
+    BTNremoveShortcut.hidden = true;
+  }
 }
 
 function resetConnection() {
-    window.electron.changeWindow('change-view-disconnect');
-} 
-
-function addShortcut() 
-{
-    console.log('Adding ' + shortcutName + ' to shortcut list...');
-    let context = '';
-    if (shortcutType.value == 'script')
-    {
-        context = shortcutContext.files[0].path;
-    }
-    window.electron.addShortcut(shortcutName.value, shortcutDesc.value, shortcutType.value, context);
-            
-    resetInputFields();
-
-    window.electron.getNames().then((value) => dispShortcuts(value));
-} 
-
-function editShortcut()
-{
-    id = shortcutSelector.value;
-    if (id == 'add-shortcut') {return;}
-    console.log('Editing shortcut by id: ' + id + ' to database...');
-    window.electron.editShortcut(id, shortcutName.value, shortcutDesc.value, shortcutType.value, shortcutContext.value);
-
-    resetInputFields();
-
-    window.electron.getNames().then((value) => dispShortcuts(value));
+  window.electron.changeWindow("change-view-disconnect");
 }
 
-function removeShortcut()
-{
-    id = shortcutSelector.value;
-    if (id == 'add-shortcut') {return;}
-    console.log('Removing shortcut by id: ' + id + ' from database...');
-    window.electron.removeShortcut(id);
+function addShortcut() {
+  console.log("Adding " + shortcutName + " to shortcut list...");
+  let context = "";
+  if (shortcutType.value == "script") {
+    context = shortcutContext.files[0].path;
+  }
+  window.electron.addShortcut(
+    shortcutName.value,
+    shortcutDesc.value,
+    shortcutType.value,
+    context
+  );
 
-    resetInputFields();
+  resetInputFields();
 
-    window.electron.getNames().then((value) => dispShortcuts(value));
+  window.electron.getNames().then((value) => dispShortcuts(value));
 }
 
-function resetInputFields()
-{
-    //reset input fields to default values
-    shortcutName.value = '';
-    shortcutDesc.value = '';
-    shortcutType.value = 'script';
-    shortcutContext.value = '';
+function editShortcut() {
+  id = shortcutSelector.value;
+  if (id == "add-shortcut") {
+    return;
+  }
+  console.log("Editing shortcut by id: " + id + " to database...");
+  window.electron.editShortcut(
+    id,
+    shortcutName.value,
+    shortcutDesc.value,
+    shortcutType.value,
+    shortcutContext.value
+  );
+
+  resetInputFields();
+
+  window.electron.getNames().then((value) => dispShortcuts(value));
 }
 
-function updateMobile()
-{
-    window.electron.getNames().then((value) => {
-        socket.emit('send-shortcuts', value.map((e) => { return {id: e.id, name: e.name} }))
-    });
+function removeShortcut() {
+  id = shortcutSelector.value;
+  if (id == "add-shortcut") {
+    return;
+  }
+  console.log("Removing shortcut by id: " + id + " from database...");
+  window.electron.removeShortcut(id);
+
+  resetInputFields();
+
+  window.electron.getNames().then((value) => dispShortcuts(value));
 }
 
-socket.on('activate-shortcut', (shortcut) => {
-    console.log('Desktop was notified that the shortcut with id: ' + shortcut.id + ' was pressed...');
-    window.electron.getShortcut(shortcut.id).then((value) => executeShortcut(value));
+function resetInputFields() {
+  //reset input fields to default values
+  shortcutName.value = "";
+  shortcutDesc.value = "";
+  shortcutType.value = "script";
+  shortcutContext.value = "";
+}
+
+function updateMobile() {
+  window.electron.getNames().then((value) => {
+    socket.emit(
+      "send-shortcuts",
+      value.map((e) => {
+        return { id: e.id, name: e.name };
+      })
+    );
+  });
+}
+
+socket.on("activate-shortcut", (shortcut) => {
+  console.log(
+    "Desktop was notified that the shortcut with id: " +
+      shortcut.id +
+      " was pressed..."
+  );
+  window.electron
+    .getShortcut(shortcut.id)
+    .then((value) => executeShortcut(value));
 });
 
-function executeShortcut(shortcut)
-{
-    if (shortcut.type == 'script')
-    {
-        window.electron.runScript(shortcut.context);
-    }
+function executeShortcut(shortcut) {
+  if (shortcut.type == "script") {
+    window.electron.runScript(shortcut.context);
+  }
 }

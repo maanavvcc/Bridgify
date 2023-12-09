@@ -1,21 +1,21 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateShortcutInfo } from './actions.js'
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateShortcutInfo } from "./actions.js";
 
 const ShortcutInfoListener = () => {
-    const socket = useSelector((state) => state.socket);
-    const dispatch = useDispatch();
+  const socket = useSelector((state) => state.socket);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (socket) {
-      socket.on('shortcut-info', (data) => {
+      socket.on("shortcut-info", (data) => {
         dispatch(updateShortcutInfo(data));
       });
     }
 
     return () => {
       if (socket) {
-        socket.off('shortcut-info');
+        socket.off("shortcut-info");
       }
     };
   }, [socket, dispatch]);
@@ -30,7 +30,7 @@ class ShortcutsList {
   }
 */
 export const getShortcuts = (shortcutInfo) => {
-    return shortcutInfo;
-}
+  return shortcutInfo;
+};
 
 export default ShortcutInfoListener;

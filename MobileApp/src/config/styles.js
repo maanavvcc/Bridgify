@@ -1,88 +1,88 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   topBar: {
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    backgroundColor: '#161616'
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    backgroundColor: "#161616",
   },
   menu: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 0,
     zIndex: 1,
-    backgroundColor: 'transparent', // Example background color
+    backgroundColor: "transparent", // Example background color
     padding: 10,
     borderRadius: 5,
     elevation: 5,
   },
   button: {
-    backgroundColor: '#7ac68a',
+    backgroundColor: "#7ac68a",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   connect: {
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    backgroundColor: '#161616',
-    color: 'white'
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#161616",
+    color: "white",
   },
   container: {
     flex: 1,
-    paddingTop: 20, 
-    flexDirection: 'column',
-    backgroundColor: '#161616'
+    paddingTop: 20,
+    flexDirection: "column",
+    backgroundColor: "#161616",
   },
   mainContent: {
     flex: 1,
     zIndex: -1,
-    flexDirection: 'column',
+    flexDirection: "column",
     margin: 0,
     padding: 0,
-    backgroundColor: '#161616'
+    backgroundColor: "#161616",
   },
-  widget1: { 
-    height: '20%', 
-    backgroundColor: 'lightblue',
+  widget1: {
+    height: "20%",
+    backgroundColor: "lightblue",
     borderRadius: 10,
-    marginTop: 16, 
+    marginTop: 16,
   },
   widget2: {
-    height: '20%', 
-    backgroundColor: 'lightblue',
+    height: "20%",
+    backgroundColor: "lightblue",
     borderRadius: 10,
-    marginTop: 16, 
+    marginTop: 16,
   },
   widget3: {
-    height: '20%', 
-    backgroundColor: 'lightblue', 
+    height: "20%",
+    backgroundColor: "lightblue",
     borderRadius: 10,
-    marginTop: 16, 
+    marginTop: 16,
   },
   widgetText: {
-    margin: 16, 
+    margin: 16,
   },
   shortcutText: {
     margin: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     fontSize: 30,
   },
   shortcutBackground: {
-    height: '25%', 
-    backgroundColor: 'lightgreen', 
+    height: "25%",
+    backgroundColor: "lightgreen",
     borderRadius: 10,
     marginTop: 16,
-  }, 
+  },
   contextMenu: {
-    color: 'white'
-  }
+    color: "white",
+  },
 });

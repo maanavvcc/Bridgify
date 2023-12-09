@@ -1,13 +1,15 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import Connect from './src/components/Connect';
-import Home from './src/components/Home';
-import SystemInfoListener from './src/config/sysinfo.js'; // Import the SystemInfoListener
-import ShortcutInfoListener from './src/config/shortcut.js';
-import store from './src/config/store.js';
-import { Provider } from 'react-redux';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import Connect from "./src/components/Connect";
+import Home from "./src/components/Home";
+import Navigate from "./src/components/Navigation";
+import Mouse from "./src/components/Mouse";
+import SystemInfoListener from "./src/config/sysinfo.js";
+import ShortcutInfoListener from "./src/config/shortcut.js";
+import store from "./src/config/store.js";
+import { Provider } from "react-redux";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Stack = createStackNavigator();
 
@@ -20,7 +22,9 @@ const App = () => {
           <ShortcutInfoListener />
           <Stack.Navigator initialRouteName="Connect">
             <Stack.Screen name="Connect" component={Connect} />
-            <Stack.Screen name="HomeScreen" component={Home} />
+            <Stack.Screen name="Navigate" component={Navigate} />
+            <Stack.Screen name="Performance" component={Home} />
+            <Stack.Screen name="Mouse" component={Mouse} />
           </Stack.Navigator>
         </GestureHandlerRootView>
       </NavigationContainer>

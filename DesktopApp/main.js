@@ -1,55 +1,57 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-const axios = require('axios');
-const fs = require('fs');
-const { setupConnectionKeyEngine } = require('./ConnectionKeyEngine/connectionKeyEngine');
+const { app, BrowserWindow, ipcMain } = require("electron");
+const path = require("path");
+const axios = require("axios");
+const fs = require("fs");
+const {
+  setupConnectionKeyEngine,
+} = require("./ConnectionKeyEngine/connectionKeyEngine");
 
 let mainWindow;
 let connectionKeyEngine; // Store a reference to the connection key engine
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    title: 'Bridgify Desktop',
+    title: "Bridgify Desktop",
     width: 800,
     height: 600,
     webPreferences: {
       sandbox: false,
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
     },
   });
 
-  mainWindow.loadFile('index.html');
+  mainWindow.loadFile("index.html");
 
-  ipcMain.on('upload-file', async (event, filePath, name) => {
+  ipcMain.on("upload-file", async (event, filePath, name) => {
     try {
       const fileData = fs.readFileSync(filePath);
       const formData = new FormData();
-  
+
       // Convert Buffer to Blob
-      const blob = new Blob([fileData], { type: 'application/octet-stream' });
-  
+      const blob = new Blob([fileData], { type: "application/octet-stream" });
+
       // Append the file to FormData
-      formData.append('file', blob, name);
-  
+      formData.append("file", blob, name);
+
       // Use fetch API for the HTTP request
-      const response = await fetch('http://localhost:3000/upload', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/upload", {
+        method: "POST",
         body: formData,
       });
-  
+
       if (response.ok) {
-        event.reply('file-uploaded', 'File uploaded successfully');
+        event.reply("file-uploaded", "File uploaded successfully");
       } else {
         throw new Error(`Failed to upload file. Status: ${response.status}`);
       }
     } catch (error) {
-      console.error('Error uploading file:', error.message);
-      event.reply('file-upload-error', 'Error uploading file');
+      console.error("Error uploading file:", error.message);
+      event.reply("file-upload-error", "Error uploading file");
     }
   });
 
-  mainWindow.on('closed', () => {
+  mainWindow.on("closed", () => {
     mainWindow = null;
     disconnect(); // Disconnect on window close
   });
@@ -67,28 +69,28 @@ function initializeApp() {
   //   }
   // });
 
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 }
 
-ipcMain.on('change-view-shortcuts', () => {
-  BrowserWindow.getAllWindows()[0].loadFile('shortcuts.html');
+ipcMain.on("change-view-shortcuts", () => {
+  BrowserWindow.getAllWindows()[0].loadFile("shortcuts.html");
 });
 
-ipcMain.on('change-view-disconnect', () => {
-  BrowserWindow.getAllWindows()[0].loadFile('index.html');
+ipcMain.on("change-view-disconnect", () => {
+  BrowserWindow.getAllWindows()[0].loadFile("index.html");
 });
 
 app.whenReady().then(initializeApp);
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
 });
 
 // Add this block to handle disconnect
-ipcMain.on('disconnect', () => {
-  console.log('Disconnected from the server');
+ipcMain.on("disconnect", () => {
+  console.log("Disconnected from the server");
   disconnect();
 });
 

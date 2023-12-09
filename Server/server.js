@@ -1,30 +1,32 @@
-const express = require('express');
-const http = require('http');
-const multer = require('multer');
-const { Server } = require('socket.io');
+const express = require("express");
+const http = require("http");
+const multer = require("multer");
+const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-const path = require('path');
-const si = require('systeminformation');
-const fs = require('fs');
-const bcrypt = require('bcrypt');
+const path = require("path");
+const si = require("systeminformation");
+const fs = require("fs");
+const bcrypt = require("bcrypt");
 let mobileConnected = 0; // Initialize mobileConnected as a variable
 let serverKey = generateKey();
 const port = 3000;
 const connections = {};
-const cors = require('cors');
+const cors = require("cors");
 app.use(cors());
+const robot = require("robotjs");
+const screenSize = robot.getScreenSize();
+var mouseSensitivity = 0.5;
+var i = 0;
 
-
-
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
 
   // Initialize connections[socket.id] as an object
   connections[socket.id] = {};
 
-  socket.on('desktop-connect', () => {
+  socket.on("desktop-connect", () => {
     // Generate a new key for the desktop connection
 
     generateKey().then(({ plaintextKey, hashedKey }) => {
@@ -32,14 +34,14 @@ io.on('connection', (socket) => {
       connections[socket.id].desktop = socket.id;
 
       // Inform the desktop client about the new key
-      io.to(socket.id).emit('key', plaintextKey);
+      io.to(socket.id).emit("key", plaintextKey);
     });
   });
 
   // Handle mobile connection
-  socket.on('mobile-connect', async (submittedKey) => {
-    console.log('Submitted Key:', submittedKey);
-    console.log('Server Key:', serverKey);
+  socket.on("mobile-connect", async (submittedKey) => {
+    console.log("Submitted Key:", submittedKey);
+    console.log("Server Key:", serverKey);
 
     try {
       // Compare the submitted key with the hashed key using bcrypt
@@ -50,46 +52,61 @@ io.on('connection', (socket) => {
         mobileConnected += 1;
         console.log(mobileConnected);
         connections[socket.id].mobile = socket.id;
-        io.to(socket.id).emit('mobile-connected');
-        console.log('Mobile connected successfully');
+        io.to(socket.id).emit("mobile-connected");
+        console.log("Mobile connected successfully");
       } else {
-        io.to(socket.id).emit('connection-error', 'Invalid key');
-        console.log('Invalid key submitted. Connection rejected.');
+        io.to(socket.id).emit("connection-error", "Invalid key");
+        console.log("Invalid key submitted. Connection rejected.");
         socket.disconnect(); // Disconnect the socket on an invalid key
       }
     } catch (error) {
-      console.error('Error comparing keys:', error.message);
+      console.error("Error comparing keys:", error.message);
     }
+    socket.on("move-mouse", (thetax, thetay) => {
+      i++;
+      if (i % 2 === 0) {
+        var mouse = robot.getMousePos();
+        robot.moveMouse(
+          mouse.x + mouseSensitivity * thetax,
+          mouse.y + mouseSensitivity * thetay
+        );
+      }
+    });
+    socket.on("mouse-click", () => {
+      robot.mouseClick();
+    });
+    socket.on("mouse-right", () => {
+      robot.mouseClick("right", false);
+    });
   });
 
   // Handle disconnection
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     if (connections[socket.id] && connections[socket.id].mobile === socket.id) {
       mobileConnected -= 1;
       console.log(mobileConnected);
     }
-    console.log('User disconnected:', socket.id);
+    console.log("User disconnected:", socket.id);
     // Optionally, you can remove the connection object when a socket disconnects
     delete connections[socket.id];
   });
 
   //Handle Info Transfer to Mobile
-  socket.on('send-shortcuts', (shortcuts) => {
-    console.log('Server is broadcasting this to the mobile ', shortcuts);
-    socket.broadcast.emit('shortcut-info', shortcuts);
+  socket.on("send-shortcuts", (shortcuts) => {
+    console.log("Server is broadcasting this to the mobile ", shortcuts);
+    socket.broadcast.emit("shortcut-info", shortcuts);
   });
 
   //Handle Shortcut Notification to Desktop
-  socket.on('shortcut-pressed', (shortcut) => {
-    console.log('Server is broadcasting this to the desktop ', shortcut);
-    socket.broadcast.emit('activate-shortcut', shortcut);
+  socket.on("shortcut-pressed", (shortcut) => {
+    console.log("Server is broadcasting this to the desktop ", shortcut);
+    socket.broadcast.emit("activate-shortcut", shortcut);
   });
 });
 
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);
@@ -98,45 +115,45 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // New route to get a list of available files
-app.get('/getFiles', (req, res) => {
-  const uploadsDir = path.join(__dirname, 'uploads');
+app.get("/getFiles", (req, res) => {
+  const uploadsDir = path.join(__dirname, "uploads");
 
   // Read the contents of the 'uploads' directory
   fs.readdir(uploadsDir, (err, files) => {
     if (err) {
-      console.error('Error reading directory:', err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      console.error("Error reading directory:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     // Send the list of files as a JSON response
-    console.log(files)
+    console.log(files);
     res.json(files);
   });
 });
 
 // New route to handle file downloads
-app.get('/download/:fileName', (req, res) => {
+app.get("/download/:fileName", (req, res) => {
   const fileName = req.params.fileName;
-  const filePath = path.join(__dirname, 'uploads', fileName);
+  const filePath = path.join(__dirname, "uploads", fileName);
 
   // Set appropriate headers for the response
-  res.setHeader('Content-disposition', `attachment; filename=${fileName}`);
-  res.setHeader('Content-type', 'application/octet-stream');
+  res.setHeader("Content-disposition", `attachment; filename=${fileName}`);
+  res.setHeader("Content-type", "application/octet-stream");
 
   // Pipe the file stream to the response
   const fileStream = fs.createReadStream(filePath);
   fileStream.pipe(res);
 });
 
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post("/upload", upload.single("file"), (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ error: 'No file received' });
+    return res.status(400).json({ error: "No file received" });
   }
 
-  res.json({ message: 'File uploaded successfully' });
+  res.json({ message: "File uploaded successfully" });
 });
 
 app.listen(port, () => {
@@ -166,14 +183,14 @@ setInterval(async () => {
     };
 
     // Send system information to all connected sockets
-    io.emit('system-info', systemInfo);
+    io.emit("system-info", systemInfo);
   } catch (error) {
-    console.error('Error fetching system information:', error.message);
+    console.error("Error fetching system information:", error.message);
   }
-}, 2000); // Fetch every 2 seconds
+}, 20000); // Fetch every 20 seconds
 
 async function generateKey() {
-  let plaintextKey = '';
+  let plaintextKey = "";
 
   // Ensure that the generated key has exactly 6 digits
   while (plaintextKey.length < 6) {

@@ -2,46 +2,57 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Electron App</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Shortcut Home Page</h1>
-    
-    <select name='shortcut-selection' id='shortcut-selection' onchange='shortcutChange()'>
-        <option value='add-shortcut'>Add Shortcut</option>
+
+    <select
+      name="shortcut-selection"
+      id="shortcut-selection"
+      onchange="shortcutChange()"
+    >
+      <option value="add-shortcut">Add Shortcut</option>
     </select>
 
-    <div id='addShortcutForm'>
-        <h4 id='lbl-add-shortcut'>Add Shortcut</h4>
-        <h4 id='lbl-edit-shortcut'>Edit Shortcut</h4>
-        
-        <label for='shortcut-name'>Name: </label><br>
-        <input type='text' id='shortcut-name' name='shortcut-name'><br>
+    <div id="addShortcutForm">
+      <h4 id="lbl-add-shortcut">Add Shortcut</h4>
+      <h4 id="lbl-edit-shortcut">Edit Shortcut</h4>
 
-        <label for='shortcut-desc'>Description: </label><br>
-        <input type='text' id='shortcut-desc' name='shortcut-desc'><br>
-        
-        <label for='shortcut-type'>Shortcut Type: </label><br>
-        <select name='shortcut-type' id='shortcut-type'>
-            <option value='script'>Script</option>
-        </select><br>
-        
-        <label for='shortcut-context'>Context: </label><br>
-        <input type="file" id="shortcut-context" name="shortcut-context"><br>
+      <label for="shortcut-name">Name: </label><br />
+      <input type="text" id="shortcut-name" name="shortcut-name" /><br />
 
-        <button onclick="addShortcut()" id='btn-add-shortcut'>Add Shortcut</button>
-        <button onclick="editShortcut()" id='btn-edit-shortcut'>Edit Shortcut</button>
-        <button onclick="removeShortcut()" id='btn-remove-shortcut'>Remove Shortcut</button>
+      <label for="shortcut-desc">Description: </label><br />
+      <input type="text" id="shortcut-desc" name="shortcut-desc" /><br />
+
+      <label for="shortcut-type">Shortcut Type: </label><br />
+      <select name="shortcut-type" id="shortcut-type">
+        <option value="script">Script</option></select
+      ><br />
+
+      <label for="shortcut-context">Context: </label><br />
+      <input type="file" id="shortcut-context" name="shortcut-context" /><br />
+
+      <button onclick="addShortcut()" id="btn-add-shortcut">
+        Add Shortcut
+      </button>
+      <button onclick="editShortcut()" id="btn-edit-shortcut">
+        Edit Shortcut
+      </button>
+      <button onclick="removeShortcut()" id="btn-remove-shortcut">
+        Remove Shortcut
+      </button>
     </div>
-    
+
     <div id="shortcut-list"></div>
-    
+
     <button onclick="updateMobile()">Update Mobile</button>
     <button onclick="resetConnection()">Disconnect</button>
 
     <script src="shortcuts.js"></script>
-</body>
+  </body>
+</html>
